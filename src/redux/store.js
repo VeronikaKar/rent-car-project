@@ -11,7 +11,6 @@ import {
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
-import { filtersReducer } from "./filters/slice";
 import { carsReducer } from "./catalog/slice";
 
 const carsConfig = {
@@ -21,12 +20,9 @@ const carsConfig = {
   whitelist: ["favorites", "items"],
 };
 
-const persistedCarsReducer = persistReducer(carsConfig, carsReducer);
-
 export const store = configureStore({
   reducer: {
-    cars: persistedCarsReducer,
-    filters: filtersReducer,
+    cars: persistReducer(carsConfig, carsReducer),
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

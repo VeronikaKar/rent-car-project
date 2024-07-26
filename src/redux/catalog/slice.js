@@ -1,91 +1,52 @@
-import { createSlice, createSelector } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 import { fetchCars } from "./operations";
 
-const carsSlice = createSlice({
+const initialState = {
+  items: [],
+  loading: false,
+  error: null,
+  favorites: [],
+  filters: {},
+};
+
+const slice = createSlice({
   name: "cars",
-  initialState: {
-    items: [],
-    favorites: [],
-    error: null,
-    loading: false,
-    page: 1,
-    filters: {
-      make: "",
-      minPrice: "",
-      maxPrice: "",
-      minMileage: "",
-      maxMileage: "",
-    },
-  },
+  initialState,
   reducers: {
-    addFavorite: (state, action) => {
-      const carId = action.payload;
-      if (!state.favorites.includes(carId)) {
-        state.favorites.push(carId);
+    addFavorite(state, { payload }) {
+      if (
+        !Array.isArray(payload) &&
+        !state.favorites.some((item) => item.id === payload.id)
+      ) {
+        state.favorites.push(payload);
       }
     },
-    removeFavorite: (state, action) => {
-      const carId = action.payload;
-      state.favorites = state.favorites.filter((id) => id !== carId);
+    deleteFavorite(state, { payload }) {
+      state.favorites = state.favorites.filter((item) => item.id !== payload);
     },
-    resetCars: (state) => {
-      state.items = [];
-      state.page = 1;
-    },
-    setPage: (state, action) => {
-      state.page = action.payload;
-    },
-    setFilters: (state, action) => {
-      state.filters = { ...state.filters, ...action.payload };
+    setFilters(state, { payload }) {
+      state.filters = payload;
     },
   },
   extraReducers: (builder) => {
     builder
       .addCase(fetchCars.pending, (state) => {
         state.loading = true;
-        state.error = null;
       })
-      .addCase(fetchCars.fulfilled, (state, action) => {
-        state.items = [...state.items, ...action.payload];
+      .addCase(fetchCars.fulfilled, (state, { payload }) => {
         state.loading = false;
+        if (Array.isArray(payload)) {
+          state.items = [...state.items, ...payload];
+        } else {
+          state.items.push(payload);
+        }
       })
-      .addCase(fetchCars.rejected, (state, action) => {
-        state.error = action.payload;
+      .addCase(fetchCars.rejected, (state, { payload }) => {
         state.loading = false;
+        state.error = payload;
       });
   },
 });
 
-export const { addFavorite, removeFavorite, resetCars, setPage, setFilters } =
-  carsSlice.actions;
-
-export const carsReducer = carsSlice.reducer;
-
-
-export const selectFilteredCars = createSelector(
-  (state) => state.cars.items,
-  (state) => state.cars.filters,
-  (items, filters) => {
-    const { make, minPrice, maxPrice, minMileage, maxMileage } = filters;
-
-    return items.filter((car) => {
-      const matchesMake = !make || car.make === make;
-      const matchesMinPrice = !minPrice || car.rentalPrice >= minPrice;
-      const matchesMaxPrice = !maxPrice || car.rentalPrice <= maxPrice;
-      const matchesMinMileage = !minMileage || car.mileage >= minMileage;
-      const matchesMaxMileage = !maxMileage || car.mileage <= maxMileage;
-
-      return (
-        matchesMake &&
-        matchesMinPrice &&
-        matchesMaxPrice &&
-        matchesMinMileage &&
-        matchesMaxMileage
-      );
-    });
-  }
-);
-
-export const selectCarsPage = (state) => state.cars.page;
-
-export default carsSlice.reducer;
+export const { addFavorite, deleteFavorite, setFilters } = slice.actions;
+export const carsReducer = slice.reducer;

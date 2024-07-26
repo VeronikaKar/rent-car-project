@@ -1,25 +1,35 @@
-import React from "react";
-import { createPortal } from "react-dom";
-import s from "./Modal.module.css";
+import { useEffect } from "react";
 
-const Modal = ({ car, onClose }) => {
-  return createPortal(
-    <div className={s.overlay} onClick={onClose}>
-      <div className={s.modal} onClick={(e) => e.stopPropagation()}>
-        <button className={s.closeButton} onClick={onClose}>
+import s from "./ModalWindow.module.scss";
+const ModalWindow = ({ children, onClose }) => {
+  const handleBackDropClick = (e) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [onClose]);
+  return (
+    <div className={s.wrapper} onClick={handleBackDropClick}>
+      <div className={s.content}>
+        <button className={s.closeBtn} onClick={onClose}>
           ×
         </button>
-        <h2>
-          {car.make} {car.model}
-        </h2>
-        <p>{car.description}</p>
-        <p>Rental Price: ${car.rentalPrice}/hour</p>
-        <p>Mileage: {car.mileage.toLocaleString()} km</p>
-     
+        {children}
       </div>
-    </div>,
-    document.body
+    </div>
   );
 };
 
-export default Modal;
+export default ModalWindow;

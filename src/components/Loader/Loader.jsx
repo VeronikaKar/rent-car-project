@@ -1,6 +1,6 @@
 import React from "react";
-import { InfinitySpin } from "react-loader-spinner"; 
-import s from "./Loader.module.css"; 
+import { InfinitySpin } from "react-loader-spinner";
+import s from "./Loader.module.scss";
 
 const Loader = () => {
   return (

@@ -1,20 +1,18 @@
-
-
 .loadMoreButton {
-  width: 79px;
-  height: 24px;
-  position: absolute;
-  top: 1752px;
-  left: 680px;
-  font-family: 'Manrope', sans-serif;
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 24px;
-  text-align: left;
-  background: #3470FF;
-  color: #FFFFFF;
+  border-radius: 12px;
+  padding: 14px 44px;
+  width: 136px;
+  height: 48px;
+  border: none;
+  background-color: #3470ff;
+  font-family: var(--font-family);
+  font-weight: 600;
+  font-size: 14px;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
 .loadMoreButton:hover {
-  background: #0B44CD;
+  background-color: #0b44cd;
 }
