@@ -7,15 +7,19 @@ const baseUrl = axios.create({
 });
 
 export const fetchCars = createAsyncThunk(
-  "cars/fetchLimit",
-  async (page, thunkAPI) => {
+  "cars/fetchCars",
+  async ({ page, filters }, thunkAPI) => {
     try {
       const response = await baseUrl.get("adverts", {
-        params: { page: page, limit: 12 },
+        params: {
+          page: page,
+          limit: 12,
+          ...filters,
+        },
       });
       return response.data;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.message || "An error occurred");
+      return thunkAPI.rejectWithValue(error.message);
     }
   }
 );

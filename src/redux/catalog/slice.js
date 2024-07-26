@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, createSelector } from "@reduxjs/toolkit";
 import { fetchCars } from "./operations";
 
 const carsSlice = createSlice({
@@ -9,6 +9,13 @@ const carsSlice = createSlice({
     error: null,
     loading: false,
     page: 1,
+    filters: {
+      make: "",
+      minPrice: "",
+      maxPrice: "",
+      minMileage: "",
+      maxMileage: "",
+    },
   },
   reducers: {
     addFavorite: (state, action) => {
@@ -28,6 +35,9 @@ const carsSlice = createSlice({
     setPage: (state, action) => {
       state.page = action.payload;
     },
+    setFilters: (state, action) => {
+      state.filters = { ...state.filters, ...action.payload };
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -46,8 +56,36 @@ const carsSlice = createSlice({
   },
 });
 
-export const { addFavorite, removeFavorite, resetCars, setPage } =
+export const { addFavorite, removeFavorite, resetCars, setPage, setFilters } =
   carsSlice.actions;
 
 export const carsReducer = carsSlice.reducer;
+
+
+export const selectFilteredCars = createSelector(
+  (state) => state.cars.items,
+  (state) => state.cars.filters,
+  (items, filters) => {
+    const { make, minPrice, maxPrice, minMileage, maxMileage } = filters;
+
+    return items.filter((car) => {
+      const matchesMake = !make || car.make === make;
+      const matchesMinPrice = !minPrice || car.rentalPrice >= minPrice;
+      const matchesMaxPrice = !maxPrice || car.rentalPrice <= maxPrice;
+      const matchesMinMileage = !minMileage || car.mileage >= minMileage;
+      const matchesMaxMileage = !maxMileage || car.mileage <= maxMileage;
+
+      return (
+        matchesMake &&
+        matchesMinPrice &&
+        matchesMaxPrice &&
+        matchesMinMileage &&
+        matchesMaxMileage
+      );
+    });
+  }
+);
+
+export const selectCarsPage = (state) => state.cars.page;
+
 export default carsSlice.reducer;

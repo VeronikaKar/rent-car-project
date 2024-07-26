@@ -1,85 +1,59 @@
 import React from "react";
 import { useDispatch } from "react-redux";
 import { HeartIcon, PhoneIcon } from "lucide-react";
-import s from "./CatalogItem.module.css";
 import { addFavorite, removeFavorite } from "../../redux/catalog/slice.js";
+import s from "./CatalogItem.module.css";
 
-export const CatalogItem = ({ car, isFavorite, onOpen }) => {
+const CatalogItem = ({ car, isFavorite }) => {
   const dispatch = useDispatch();
-  const {
-    img,
-    make,
-    model,
-    rentalPrice,
-    year,
-    city,
-    country,
-    rentalCompany,
-    type,
-    id,
-    accessories = [], 
-    mileage,
-  } = car;
-
- 
-  const formattedMileage = mileage != null ? mileage.toLocaleString() : "N/A";
-
 
   const handleFavoriteToggle = () => {
     if (isFavorite) {
-      dispatch(removeFavorite(car));
+      dispatch(removeFavorite(car.id));
     } else {
-      dispatch(addFavorite(car));
+      dispatch(addFavorite(car.id));
     }
   };
 
   return (
     <li className={s.item}>
       <div className={s.img_block}>
-        <img src={img} alt={`${make} ${model}`} />
+        <img src={car.img} alt={`${car.make} ${car.model}`} />
         <button
           type="button"
           onClick={handleFavoriteToggle}
           className={`${s.heart} ${isFavorite ? s.favorite : ""}`}
         >
-          {isFavorite ? <HeartIcon color="#FF0000" /> : <HeartIcon />}
+          <HeartIcon color={isFavorite ? "#FF0000" : "#000"} />
         </button>
       </div>
       <div className={s.titles_block}>
         <h3>
-          {make || "Make N/A"}
-          <span className={s.model}> {model || "Model N/A"}</span>,{" "}
-          {year || "Year N/A"}
+          {car.make} <span className={s.model}>{car.model}</span>, {car.year}
         </h3>
-        <p className={s.title_price}>{rentalPrice || "Price N/A"}</p>
+        <p className={s.title_price}>${car.rentalPrice}/hour</p>
       </div>
       <div className={s.labels_block}>
         <ul className={s.label_list}>
-          <li className={s.label_item}>{city || "City N/A"}</li>
-          <li className={s.label_item}>{country || "Country N/A"}</li>
-          <li className={s.label_item}>
-            {rentalCompany || "Rental Company N/A"}
-          </li>
+          <li className={s.label_item}>{car.city}</li>
+          <li className={s.label_item}>{car.country}</li>
+          <li className={s.label_item}>{car.rentalCompany}</li>
         </ul>
         <ul className={s.label_list}>
-          <li className={s.label_item}>{type || "Type N/A"}</li>
-          <li className={s.label_item}>{model || "Model N/A"}</li>
-          <li className={s.label_item}>{id || "ID N/A"}</li>
+          <li className={s.label_item}>{car.type}</li>
+          <li className={s.label_item}>{car.id}</li>
           <li className={s.label_item}>
-            {accessories.length > 0
-              ? accessories[0].slice(0, 15)
-              : "No accessories"}
+            {Array.isArray(car.accessories) ? car.accessories.join(", ") : ""}
           </li>
         </ul>
       </div>
       <div className={s.btn_block}>
-        <button onClick={onOpen} className={s.learnMoreButton}>
+        <button className={s.learnMoreButton} onClick={() => onOpen(car)}>
           Learn more
         </button>
       </div>
       <a href={`tel:+380730000000`} className={s.rentButton}>
-        Rent this car
-        <PhoneIcon />
+        Rent this car <PhoneIcon />
       </a>
     </li>
   );

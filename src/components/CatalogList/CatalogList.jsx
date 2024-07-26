@@ -8,37 +8,37 @@ import {
 import CatalogItem from "../CatalogItem/CatalogItem";
 import s from "./CatalogList.module.css";
 import { fetchCars } from "../../redux/catalog/operations.js";
+import Pagination from "../Pagination/Pagination";
+import Filter from "../Filter/Filter";
+import { selectFilteredCars } from "../../redux/catalog/slice.js";
 
 const CatalogList = () => {
   const dispatch = useDispatch();
-  const {
-    items: cars,
-    favorites,
-    status,
-    error,
-    page,
-  } = useSelector((state) => state.cars);
+  const { favorites, error, page, filters } = useSelector(
+    (state) => state.cars
+  );
+  const cars = useSelector(selectFilteredCars);
 
   useEffect(() => {
-    dispatch(fetchCars({ page }));
-  }, [dispatch, page]);
+    dispatch(fetchCars({ page, filters }));
+  }, [dispatch, page, filters]);
 
-  if (status === "loading") return <div>Loading...</div>;
-  if (status === "failed") return <div>Error: {error}</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
-    <ul className={s.list}>
-      {cars.map((car) => (
-        <CatalogItem
-          key={car.id}
-          car={car}
-          isFavorite={favorites.includes(car.id)}
-          onAddFavorite={() => dispatch(addFavorite(car.id))}
-          onRemoveFavorite={() => dispatch(removeFavorite(car.id))}
-        />
-      ))}
-      <button onClick={() => dispatch(setPage(page + 1))}>Next Page</button>
-    </ul>
+    <div>
+      <Filter />
+      <ul className={s.list}>
+        {cars.map((car) => (
+          <CatalogItem
+            key={car.id}
+            car={car}
+            isFavorite={favorites.includes(car.id)}
+          />
+        ))}
+      </ul>
+      <Pagination />
+    </div>
   );
 };
 

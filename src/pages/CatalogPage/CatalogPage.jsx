@@ -1,37 +1,49 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchCars } from "../../redux/catalog/operations.js";
-import { selectFilters } from "../../redux/filters/selectors.js";
-import CatalogList from "../../components/CatalogList/CatalogList";
-import PriceRangeFilter from "../../components/PriceRangeFilter/PriceRangeFilter";
-import MileageRangeFilter from "../../components/MileageRangeFilter/MileageRangeFilter";
-import MakesFilter from "../../components/MakesFilter/MakesFilter";
+import { setPage } from "../../redux/catalog/slice.js";
+import CatalogItem from "../../components/CatalogItem/CatalogItem";
+import Filter from "../../components/Filter/Filter";
+import Pagination from "../../components/Pagination/Pagination";
 import s from "./CatalogPage.module.css";
+import { fetchCars } from "../../redux/catalog/operations";
 
 const CatalogPage = () => {
   const dispatch = useDispatch();
-  const filters = useSelector(selectFilters);
-  const cars = useSelector((state) => state.cars.items);
-  const page = useSelector((state) => state.cars.page);
+  const {
+    items: cars,
+    favorites,
+    loading,
+    error,
+    page,
+  } = useSelector((state) => state.cars);
 
   useEffect(() => {
-    dispatch(fetchCars({ page, filters }));
-  }, [dispatch, filters, page]);
+    dispatch(fetchCars(page));
+  }, [dispatch, page]);
+
+  const handleNextPage = () => {
+    dispatch(setPage(page + 1));
+  };
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
-    <div>
-      <div className={s.searchBar}>
-        <MakesFilter />
-        <PriceRangeFilter />
-        <MileageRangeFilter />
-        <button
-          className={s.searchButton}
-          onClick={() => dispatch(fetchCars({ page, filters }))}
-        >
-          Search
-        </button>
-      </div>
-      <CatalogList cars={cars} />
+    <div className={s.container}>
+      <Filter />
+      <ul className={s.list}>
+        {cars.map((car) => (
+          <CatalogItem
+            key={car.id}
+            car={car}
+            isFavorite={favorites.includes(car.id)}
+          />
+        ))}
+      </ul>
+      <button onClick={handleNextPage} className={s.loadMoreButton}>
+        Load More
+      </button>
+      <Pagination />
     </div>
   );
 };
