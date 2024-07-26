@@ -17,14 +17,14 @@ export const CatalogItem = ({ car, isFavorite, onOpen }) => {
     rentalCompany,
     type,
     id,
-    accessories = [], // Default to an empty array if undefined
+    accessories = [], 
     mileage,
   } = car;
 
-  // Ensure mileage is a number and format it with commas
+ 
   const formattedMileage = mileage != null ? mileage.toLocaleString() : "N/A";
 
-  // Function to toggle the favorite status
+
   const handleFavoriteToggle = () => {
     if (isFavorite) {
       dispatch(removeFavorite(car));

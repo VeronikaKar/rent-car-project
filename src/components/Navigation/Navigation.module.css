@@ -1,37 +1,36 @@
-/* Base styling for the navigation */
+
 nav {
   display: flex;
   gap: 16px;
-  background-color: #85144b; /* Adjust spacing between links */
+  background-color: #85144b; 
   background-image: linear-gradient(
     15deg,
     #13547a 0%,
     #80d0c7 100%
-  ); /* Example background color for the nav */
-  padding: 10px 20px; /* Adjust padding as needed */
+  ); 
+  padding: 10px 20px; 
 }
 
-/* Base styling for the navigation link */
+
 .link {
   text-decoration: none;
-  color: #f0f4ff; /* Default link color */
+  color: #f0f4ff;
   font-family: "Manrope", sans-serif;
-  font-size: 16px; /* Adjust font size */
-  font-weight: 500; /* Adjust font weight */
-  padding: 8px 16px; /* Add padding for spacing around text */
-  border-radius: 8px; /* Rounded corners */
-  transition: color 0.3s, background-color 0.3s; /* Smooth transition for color changes */
+  font-size: 16px; 
+  font-weight: 500; 
+  padding: 8px 16px; 
+  border-radius: 8px; 
+  transition: color 0.3s, background-color 0.3s;
 }
 
-/* Styling for the active navigation link */
+
 .active {
-  color: #3470ff; /* Color for the active link */
-  font-weight: 700; /* Bold text for active state */
-  background-color: #e0e7ff; /* Light background for active state */
+  color: #3470ff; 
+  font-weight: 700; 
+  background-color: #e0e7ff; 
 }
 
-/* Optional: Add hover effect for better UX */
+
 .link:hover {
-  color: #3470ff; /* Change color on hover */
-  background-color: #f0f4ff; /* Light background on hover */
-}
+  color: #3470ff; 
+  background-color: #f0f4ff; }

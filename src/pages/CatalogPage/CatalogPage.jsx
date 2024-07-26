@@ -1,4 +1,3 @@
-// components/CatalogPage/CatalogPage.jsx
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCars } from "../../redux/catalog/operations.js";
@@ -12,8 +11,8 @@ import s from "./CatalogPage.module.css";
 const CatalogPage = () => {
   const dispatch = useDispatch();
   const filters = useSelector(selectFilters);
-  const cars = useSelector((state) => state.cars.items); // Adjust this according to your state structure
-  const page = useSelector((state) => state.cars.page); // Adjust this according to your state structure
+  const cars = useSelector((state) => state.cars.items);
+  const page = useSelector((state) => state.cars.page);
 
   useEffect(() => {
     dispatch(fetchCars({ page, filters }));
@@ -32,7 +31,7 @@ const CatalogPage = () => {
           Search
         </button>
       </div>
-      <CatalogList cars={cars} /> {/* Pass the list of cars here */}
+      <CatalogList cars={cars} />
     </div>
   );
 };

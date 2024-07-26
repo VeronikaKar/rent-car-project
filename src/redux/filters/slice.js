@@ -1,4 +1,3 @@
-// redux/filters/slice.js
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
@@ -23,7 +22,6 @@ export const filtersSlice = createSlice({
   },
 });
 
-// Ensure these actions are exported
 export const { setCarMake, setPriceRange, setMileageRange } =
   filtersSlice.actions;
 export const filtersReducer = filtersSlice.reducer;

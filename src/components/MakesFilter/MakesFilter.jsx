@@ -53,7 +53,7 @@ const MakesFilter = () => {
       <div className={s.selectWrapper}>
         <select
           id="make-select"
-          value={selectedMake || ""} // Use an empty string if selectedMake is null
+          value={selectedMake || ""} 
           onChange={handleMakeChange}
           className={s.select}
         >

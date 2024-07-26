@@ -1,9 +1,8 @@
-// components/MileageRangeSelector.js
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setMileageRange } from "../../redux/filters/slice"; // Action to set mileage range
-import { selectMileageRange } from "../../redux/filters/selectors"; // Selector for mileage range
-import s from "./MileageRangeFilter.module.css"; // CSS module
+import { setMileageRange } from "../../redux/filters/slice";
+import { selectMileageRange } from "../../redux/filters/selectors";
+import s from "./MileageRangeFilter.module.css";
 
 const MileageRangeFilter = () => {
   const dispatch = useDispatch();

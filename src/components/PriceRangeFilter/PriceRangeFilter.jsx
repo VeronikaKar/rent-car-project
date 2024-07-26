@@ -1,9 +1,9 @@
 import React from "react";
 import Select from "react-select";
 import { useDispatch, useSelector } from "react-redux";
-import { setPriceRange } from "../../redux/filters/slice"; // Action to set price range
-import { selectPriceRange } from "../../redux/filters/selectors"; // Selector for price range
-import s from "./PriceRangeFilter.module.css"; // CSS module
+import { setPriceRange } from "../../redux/filters/slice";
+import { selectPriceRange } from "../../redux/filters/selectors";
+import s from "./PriceRangeFilter.module.css";
 
 const priceOptions = [
   { value: { from: 0, to: 50 }, label: "$0 - $50" },

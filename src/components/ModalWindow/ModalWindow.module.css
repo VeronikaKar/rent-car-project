@@ -71,10 +71,10 @@
   font-weight: 400;
   line-height: 18px;
   letter-spacing: -0.02em;
-  text-align: center; /* Center text inside the condition */
+  text-align: center; 
   display: flex;
   align-items: center;
-  color: #FFFFFF; /* Text color */
+  color: #FFFFFF; 
 }
 
 .popupCardItem .condition.minimumAge {
@@ -85,7 +85,7 @@
 .popupCardItem .condition.validLicense {
   width: 138px;
   background: #F9F9F9;
-  color: #000000; /* Dark text color for visibility */
+  color: #000000; 
 }
 
 .popupCardItem .condition.securityDeposit {
@@ -97,7 +97,7 @@
   width: 86px;
   background: #F9F9F9;
   font-weight: 600;
-  color: #000000; /* Dark text color for visibility */
+  color: #000000;
 }
 
 .popupCardItem .rentalCarButton {
@@ -110,13 +110,13 @@
   font-size: 14px;
   font-weight: 600;
   line-height: 20px;
-  text-align: center; /* Center text inside button */
+  text-align: center; 
   color: #FFFFFF;
-  border: none; /* Remove default border */
-  cursor: pointer; /* Change cursor to pointer */
-  transition: background-color 0.2s ease; /* Smooth background color transition */
+  border: none; 
+  cursor: pointer; 
+  transition: background-color 0.2s ease;
 }
 
 .popupCardItem .rentalCarButton:hover {
-  background-color: #2853CC; /* Darker shade on hover */
+  background-color: #2853CC; 
 }

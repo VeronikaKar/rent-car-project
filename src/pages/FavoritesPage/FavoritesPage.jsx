@@ -1,11 +1,11 @@
-// components/FavoritesPage.js
+
 import React from "react";
 import PropTypes from "prop-types";
-import CatalogPage from "../CatalogPage/CatalogPage"; // Ensure this is the correct path
-import css from "./FavoritesPage.module.css"; // Import CSS module
+import CatalogPage from "../CatalogPage/CatalogPage";
+import css from "./FavoritesPage.module.css"; 
 
 const FavoritesPage = ({ favorites = [] }) => {
-  // Provide default value in destructuring
+  
   return (
     <div className={css.container}>
       {favorites.length === 0 ? (

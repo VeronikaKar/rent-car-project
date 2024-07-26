@@ -4,10 +4,11 @@ import { fetchCars } from "./operations";
 const carsSlice = createSlice({
   name: "cars",
   initialState: {
-    items: [], // Array to hold car ads
-    favorites: [], // Array to hold favorite car IDs
-    error: null, // Error message if something goes wrong
-    page: 1, // Current page for pagination
+    items: [],
+    favorites: [],
+    error: null,
+    loading: false,
+    page: 1,
   },
   reducers: {
     addFavorite: (state, action) => {
@@ -30,11 +31,17 @@ const carsSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(fetchCars.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
       .addCase(fetchCars.fulfilled, (state, action) => {
         state.items = [...state.items, ...action.payload];
+        state.loading = false;
       })
       .addCase(fetchCars.rejected, (state, action) => {
         state.error = action.payload;
+        state.loading = false;
       });
   },
 });

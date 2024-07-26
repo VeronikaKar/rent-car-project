@@ -1,50 +1,44 @@
-// components/CatalogList/CatalogList.jsx
-import React, { useState } from "react";
-import { useDispatch } from "react-redux";
-import { fetchCars } from "../../redux/catalog/operations.js";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  setPage,
+  addFavorite,
+  removeFavorite,
+} from "../../redux/catalog/slice.js";
 import CatalogItem from "../CatalogItem/CatalogItem";
-import ModalWindow from "../ModalWindow/ModalWindow";
 import s from "./CatalogList.module.css";
+import { fetchCars } from "../../redux/catalog/operations.js";
 
-export const CatalogList = ({ cars = [] }) => {
+const CatalogList = () => {
   const dispatch = useDispatch();
+  const {
+    items: cars,
+    favorites,
+    status,
+    error,
+    page,
+  } = useSelector((state) => state.cars);
 
-  const [isOpenModal, setIsOpenModal] = useState(false);
-  const [selectedCar, setSelectedCar] = useState(null);
+  useEffect(() => {
+    dispatch(fetchCars({ page }));
+  }, [dispatch, page]);
 
-  const handleOpenModal = (car) => {
-    setSelectedCar(car);
-    setIsOpenModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsOpenModal(false);
-    setSelectedCar(null);
-  };
-
-  const handleLoadMore = () => {
-    dispatch(fetchCars());
-  };
+  if (status === "loading") return <div>Loading...</div>;
+  if (status === "failed") return <div>Error: {error}</div>;
 
   return (
-    <>
-      <ul className={s.list}>
-        {cars.map((car) => (
-          <CatalogItem
-            key={car.id} // Ensure car.id is unique
-            car={car}
-            onOpen={() => handleOpenModal(car)}
-            isFavorite={car.isFavorite}
-          />
-        ))}
-      </ul>
-      {isOpenModal && (
-        <ModalWindow onClose={handleCloseModal} car={selectedCar} />
-      )}
-      <button className={s.btn_load_more} onClick={handleLoadMore}>
-        Load more
-      </button>
-    </>
+    <ul className={s.list}>
+      {cars.map((car) => (
+        <CatalogItem
+          key={car.id}
+          car={car}
+          isFavorite={favorites.includes(car.id)}
+          onAddFavorite={() => dispatch(addFavorite(car.id))}
+          onRemoveFavorite={() => dispatch(removeFavorite(car.id))}
+        />
+      ))}
+      <button onClick={() => dispatch(setPage(page + 1))}>Next Page</button>
+    </ul>
   );
 };
 

@@ -2,7 +2,7 @@ import React from "react";
 import Modal from "react-modal";
 import s from "./ModalWindow.module.css";
 
-Modal.setAppElement("#root"); // Important for accessibility
+Modal.setAppElement("#root"); 
 
 export const ModalWindow = ({ car, onClose }) => {
   if (!car) return null;
