@@ -1,10 +1,37 @@
-.link {
-  color: #000;
-  text-decoration: none;
-  margin-right: 10px;
+/* Base styling for the navigation */
+nav {
+  display: flex;
+  gap: 16px;
+  background-color: #85144b; /* Adjust spacing between links */
+  background-image: linear-gradient(
+    15deg,
+    #13547a 0%,
+    #80d0c7 100%
+  ); /* Example background color for the nav */
+  padding: 10px 20px; /* Adjust padding as needed */
 }
 
+/* Base styling for the navigation link */
+.link {
+  text-decoration: none;
+  color: #f0f4ff; /* Default link color */
+  font-family: "Manrope", sans-serif;
+  font-size: 16px; /* Adjust font size */
+  font-weight: 500; /* Adjust font weight */
+  padding: 8px 16px; /* Add padding for spacing around text */
+  border-radius: 8px; /* Rounded corners */
+  transition: color 0.3s, background-color 0.3s; /* Smooth transition for color changes */
+}
+
+/* Styling for the active navigation link */
 .active {
-  font-weight: bold;
-  color: #5d6fed;
+  color: #3470ff; /* Color for the active link */
+  font-weight: 700; /* Bold text for active state */
+  background-color: #e0e7ff; /* Light background for active state */
+}
+
+/* Optional: Add hover effect for better UX */
+.link:hover {
+  color: #3470ff; /* Change color on hover */
+  background-color: #f0f4ff; /* Light background on hover */
 }

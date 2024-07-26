@@ -1,0 +1,20 @@
+
+
+.loadMoreButton {
+  width: 79px;
+  height: 24px;
+  position: absolute;
+  top: 1752px;
+  left: 680px;
+  font-family: 'Manrope', sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+  text-align: left;
+  background: #3470FF;
+  color: #FFFFFF;
+}
+
+.loadMoreButton:hover {
+  background: #0B44CD;
+}
