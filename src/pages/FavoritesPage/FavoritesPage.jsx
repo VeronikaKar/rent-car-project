@@ -1,20 +1,22 @@
-import React from "react";
-import CatalogItem from "../../components/CatalogItem/CatalogItem";
+import { useSelector } from "react-redux";
+import CatalogList from "../../components/CatalogList/CatalogList";
+import {
+  selectFavoriteCars,
+  selectLoading,
+} from "../../redux/catalog/selectors.js";
 
-const FavoritesPage = ({ favorites = [], onToggleFavorite }) => {
+import css from "./FavoritesPage.module.scss";
+
+const FavoritesPage = () => {
+  const favorites = useSelector(selectFavoriteCars);
+  const loading = useSelector(selectLoading);
+
   return (
-    <div>
-      <ul>
-        {favorites.map((car) => (
-          <CatalogItem
-            key={car.id}
-            car={car}
-            isFavorite={true}
-            onToggleFavorite={onToggleFavorite}
-          />
-        ))}
-      </ul>
-    </div>
+    <main className={css.mainContent}>
+      {loading && <p>Loading...</p>}
+      {!loading && favorites.length === 0 && <p>No favorite cars found</p>}
+      <CatalogList favorites={favorites} />
+    </main>
   );
 };
 

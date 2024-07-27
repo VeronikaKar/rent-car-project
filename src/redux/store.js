@@ -1,3 +1,4 @@
+import storage from "redux-persist/lib/storage";
 import { configureStore } from "@reduxjs/toolkit";
 import {
   persistStore,
@@ -9,20 +10,19 @@ import {
   PURGE,
   REGISTER,
 } from "redux-persist";
-import storage from "redux-persist/lib/storage";
 
 import { carsReducer } from "./catalog/slice";
 
-const carsConfig = {
+const persistConfig = {
   key: "cars",
   version: 1,
   storage,
-  whitelist: ["favorites", "items"],
+  whitelist: ["catalog", "favorites", "value", "car"],
 };
 
 export const store = configureStore({
   reducer: {
-    cars: persistReducer(carsConfig, carsReducer),
+    cars: persistReducer(persistConfig, carsReducer),
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

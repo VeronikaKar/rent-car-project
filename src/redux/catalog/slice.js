@@ -1,52 +1,105 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { fetchCars } from "./operations";
+import toast from "react-hot-toast";
+
+import {
+  fetchCarById,
+  fetchCarsByQuery,
+  fetchReferenceCatalog,
+  fetchInitialCatalog,
+  fetchMoreCars,
+} from "./operations";
 
 const initialState = {
-  items: [],
-  loading: false,
-  error: null,
+  catalog: [],
+  refCatalog: [],
+  catalogCount: 0,
   favorites: [],
-  filters: {},
+  car: null,
+  value: "",
+  isLimit: false,
+  isLoading: false,
+  isError: null,
 };
 
-const slice = createSlice({
+const carsSlice = createSlice({
   name: "cars",
   initialState,
   reducers: {
-    addFavorite(state, { payload }) {
-      if (
-        !Array.isArray(payload) &&
-        !state.favorites.some((item) => item.id === payload.id)
-      ) {
-        state.favorites.push(payload);
+    increaseCatalogCount: (state, { payload }) => {
+      state.catalogCount += payload;
+    },
+    saveValue: (state, { payload }) => {
+      state.value = payload;
+    },
+    addToFavorites: (state, { payload }) => {
+      const carToAdd = state.catalog.find((car) => car.id === payload);
+      if (carToAdd && !state.favorites.some((car) => car.id === payload)) {
+        state.favorites.push(carToAdd);
       }
     },
-    deleteFavorite(state, { payload }) {
-      state.favorites = state.favorites.filter((item) => item.id !== payload);
-    },
-    setFilters(state, { payload }) {
-      state.filters = payload;
+    removeFromFavorites: (state, { payload }) => {
+      state.favorites = state.favorites.filter((car) => car.id !== payload);
     },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchCars.pending, (state) => {
-        state.loading = true;
+      .addCase(fetchReferenceCatalog.fulfilled, (state, { payload }) => {
+        state.refCatalog = payload;
+        state.isError = null;
       })
-      .addCase(fetchCars.fulfilled, (state, { payload }) => {
-        state.loading = false;
-        if (Array.isArray(payload)) {
-          state.items = [...state.items, ...payload];
-        } else {
-          state.items.push(payload);
+      .addCase(fetchInitialCatalog.fulfilled, (state, { payload }) => {
+        state.isLimit = false;
+        state.isLoading = false;
+        state.catalog = payload;
+        state.isError = null;
+      })
+      .addCase(fetchInitialCatalog.pending, (state) => {
+        state.isLoading = true;
+        state.isError = null;
+      })
+      .addCase(fetchInitialCatalog.rejected, (state, { error }) => {
+        state.isLoading = false;
+        state.isError = error.message;
+      })
+      .addCase(fetchMoreCars.fulfilled, (state, { payload }) => {
+        if (
+          payload.length === 0 ||
+          state.catalogCount === state.refCatalog.length
+        ) {
+          state.isLimit = true;
         }
+        state.catalog = [...state.catalog, ...payload];
+        state.isError = null;
       })
-      .addCase(fetchCars.rejected, (state, { payload }) => {
-        state.loading = false;
-        state.error = payload;
+      .addCase(fetchMoreCars.rejected, (state, { error }) => {
+        state.isError = error.message;
+      })
+      .addCase(fetchCarById.fulfilled, (state, { payload }) => {
+        state.car = payload; // Update state.car instead of state.auto
+        state.isError = null;
+      })
+      .addCase(fetchCarById.rejected, (state, { error }) => {
+        state.isError = error.message;
+      })
+      .addCase(fetchCarsByQuery.fulfilled, (state, { payload }) => {
+        state.isLimit = payload.length < 12; // Simplify limit check
+        state.catalog = payload;
+        state.isError = null;
+      })
+      .addCase(fetchCarsByQuery.rejected, (state, { error }) => {
+        state.isError = error.message;
+        toast("Sorry, no matches... Try again!", {
+          icon: "🤷‍♂️",
+        });
       });
   },
 });
 
-export const { addFavorite, deleteFavorite, setFilters } = slice.actions;
-export const carsReducer = slice.reducer;
+export const {
+  addToFavorites,
+  removeFromFavorites,
+  saveValue,
+  increaseCatalogCount,
+} = carsSlice.actions;
+
+export const carsReducer = carsSlice.reducer;

@@ -1,132 +1,82 @@
-import React from "react";
-import ModalWindow from "../ModalWindow/ModalWindow";
+import clsx from "clsx";
+import { useSelector } from "react-redux";
+import { selectFavoriteCars } from "../../redux/catalog/selectors.js";
 import Icon from "../Icons/Icon";
-import s from "./CatalogItem.module.scss";
+import css from "./CatalogItem.module.scss";
 
-const CatalogItem = ({ car, isFavorite, onToggleFavorite }) => {
-  const [isOpen, setIsOpen] = React.useState(false);
+const extractCityFromAddress = (address) => {
+  const firstComma = address.indexOf(",");
+  const cityAndCountry = address.slice(firstComma + 2); // Remove "Street, "
+  const secondComma = cityAndCountry.indexOf(",");
+  const city = cityAndCountry.slice(0, secondComma).trim(); // Extract city
+  return city;
+};
 
-  const handleOpenModal = () => setIsOpen(true);
-  const handleCloseModal = () => setIsOpen(false);
+const extractCountryFromAddress = (address) => {
+  const firstComma = address.indexOf(",");
+  const cityAndCountry = address.slice(firstComma + 2); // Remove "Street, "
+  const secondComma = cityAndCountry.indexOf(",");
+  const country = cityAndCountry.slice(secondComma + 2).trim(); // Extract country
+  return country;
+};
 
-  const isArray = (value) => Array.isArray(value);
+const CatalogItem = ({ car, handleClick }) => {
+  const favorites = useSelector(selectFavoriteCars);
+  const { toggleAddToFavoritesClick, handleLearnMoreClick } = handleClick;
+  const {
+    img,
+    id,
+    make,
+    model,
+    year,
+    rentalPrice,
+    address,
+    rentalCompany,
+    type,
+    accessories,
+    photoLink,
+  } = car;
 
   return (
-    <div className={s.card__item}>
-      <div className={s.card__wrapper}>
+    <div className={css.card}>
+      <div className={css.thumbnail}>
         <img
-          className={s.image}
-          src={car?.img || "default-image-url.jpg"}
-          alt={`${car?.make || "Default Make"} ${
-            car?.model || "Default Model"
-          }`}
+          src={photoLink || img}
+          alt={`${make} ${model}`}
+          className={css.image}
         />
-        <Icon isActive={isFavorite} onClick={() => onToggleFavorite(car)} />
+        <Icon
+          className={clsx(css.favoriteIcon, {
+            [css.active]: favorites.some((auto) => car.id === id),
+          })}
+          onClick={() => toggleAddToFavoritesClick(id)}
+          size={18}
+        />
       </div>
-      <div className={s.card__text}>
-        <div className={s.card__title_box}>
-          <div>
-            {car?.make || "Default Make"}, {car?.year || "Default Year"}
-          </div>
-          <div>{car?.rentalPrice || "Default Price"}</div>
+      <div className={css.cardContent}>
+        <div className={css.titleSection}>
+          <h3 className={css.cardTitle}>
+            {make} <span className={css.cardAccent}>{model}</span>, {year}
+          </h3>
+          <span className={css.cardPrice}>{rentalPrice}</span>
         </div>
-        <p className={s.card__address}>{car?.address || "Default Address"}</p>
-        <ul className={s.card__description}>
-          <li className={s.description__item}>
-            {car?.rentalCompany || "Default Rental Company"}
-          </li>
-          <li className={s.description__item}>{car?.type || "Default Type"}</li>
-          <li className={s.description__item}>
-            {car?.model || "Default Model"}
-          </li>
-          <li className={s.description__item}>{car?.id || "Default Id"}</li>
+        <ul className={css.infoList}>
+          <li className={css.infoItem}>{extractCityFromAddress(address)}</li>
+          <li className={css.infoItem}>{extractCountryFromAddress(address)}</li>
+          <li className={css.infoItem}>{rentalCompany}</li>
+          <li className={css.infoItem}>{type}</li>
+          <li className={css.infoItem}>{model}</li>
+          <li className={css.infoItem}>{id}</li>
+          <li className={css.infoItem}>{accessories[0]}</li>
         </ul>
+        <button
+          className={css.actionButton}
+          onClick={() => handleLearnMoreClick(id)}
+          type="button"
+        >
+          Learn more
+        </button>
       </div>
-      <button className={s.card__learn_more_button} onClick={handleOpenModal}>
-        Learn More
-      </button>
-      {isOpen && (
-        <ModalWindow onClose={handleCloseModal}>
-          <div className={s.modal__wrapper}>
-            <img
-              src={car?.img || "default-image-url.jpg"}
-              alt={`${car?.make || "Default Make"} ${
-                car?.model || "Default Model"
-              }`}
-              className={s.modal__image}
-            />
-          </div>
-          <div className={s.modal__description}>
-            <div>
-              <h2>
-                {car?.make || "Default Make"}
-                <span className={s.card__span}>
-                  {car?.model || "Default Model"}
-                </span>
-                , {car?.year || "Default Year"}
-              </h2>
-            </div>
-            <div>
-              <p className={s.card__address}>
-                {car?.address || "Default Address"}
-              </p>
-              <ul className={s.card__description}>
-                <li className={s.description__item}>
-                  Id: {car?.id || "Default Id"}
-                </li>
-                <li className={s.description__item}>
-                  Year: {car?.year || "Default Year"}
-                </li>
-                <li className={s.description__item}>
-                  Type: {car?.type || "Default Type"}
-                </li>
-                <li className={s.description__item}>
-                  Fuel Consumption:{" "}
-                  {car?.fuelConsumption || "Default Fuel Consumption"}
-                </li>
-                <li className={s.description__item}>
-                  Engine Size: {car?.engineSize || "Default Engine Size"}
-                </li>
-              </ul>
-              <p>{car?.description || "Default Description"}</p>
-            </div>
-            <div>
-              <p>Accessories and functionalities:</p>
-              <ul className={s.card__description}>
-                {isArray(car?.accessories) &&
-                  car.accessories.map((item, index) => (
-                    <li
-                      className={s.description__item}
-                      key={`accessory-${index}-${item}`}
-                    >
-                      {item}
-                    </li>
-                  ))}
-                {isArray(car?.functionalities) &&
-                  car.functionalities.map((item, index) => (
-                    <li
-                      className={s.description__item}
-                      key={`functionality-${index}-${item}`}
-                    >
-                      {item}
-                    </li>
-                  ))}
-              </ul>
-            </div>
-            <div>
-              <p>Rental Conditions:</p>
-              <ul>
-                <li>{car?.rentalConditions || "Default Rental Conditions"}</li>
-                <li>Mileage: {car?.mileage / 1000 || "Default Mileage"}</li>
-                <li>Price: {car?.rentalPrice || "Default Price"}</li>
-              </ul>
-            </div>
-            <a href="tel:+380730000000" className={s.link}>
-              <button className={s.modal__rent_btn}>Rental car</button>
-            </a>
-          </div>
-        </ModalWindow>
-      )}
     </div>
   );
 };

@@ -1,9 +1,10 @@
 import s from "./LoadMore.module.css";
 
-export function LoadMore({ onClick }) {
+const LoadMore = ({ handleLoadMoreClick }) => {
   return (
-    <button onClick={onClick} className={s.loadMoreButton}>
+    <button onClick={handleLoadMoreClick} className={s.loadMoreButton}>
       Load more
     </button>
   );
 }
+export default LoadMore;
