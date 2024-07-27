@@ -14,7 +14,6 @@ const CatalogItem = ({ car, isFavorite, onToggleFavorite }) => {
     setIsOpen(false);
   };
 
-  // Check if car.accessories and car.functionalities are arrays
   const isArray = (value) => Array.isArray(value);
 
   return (

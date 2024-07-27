@@ -1,5 +1,3 @@
-// Example: FavoritesPage.jsx
-
 import React from "react";
 import CatalogItem from "../../components/CatalogItem/CatalogItem";
 
@@ -9,7 +7,7 @@ const FavoritesPage = ({ favorites = [], onToggleFavorite }) => {
       <ul>
         {favorites.map((car) => (
           <CatalogItem
-            key={car.id} // Ensure that car.id is unique
+            key={car.id}
             car={car}
             isFavorite={true}
             onToggleFavorite={onToggleFavorite}
