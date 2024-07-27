@@ -27,124 +27,54 @@ const makes = [
   "Land",
 ];
 
-const Filter = () => {
+const Filter = ({ onSearch }) => {
   const dispatch = useDispatch();
   const filters = useSelector((state) => state.cars.filters);
 
   const [brand, setBrand] = useState(filters.make || "");
   const [minPrice, setMinPrice] = useState(filters.minPrice || "");
   const [maxPrice, setMaxPrice] = useState(filters.maxPrice || "");
-  const [minMileage, setMinMileage] = useState(filters.minMileage || "");
-  const [maxMileage, setMaxMileage] = useState(filters.maxMileage || "");
 
   useEffect(() => {
-    dispatch(
-      setFilters({
-        make: brand,
-        minPrice,
-        maxPrice,
-        minMileage,
-        maxMileage,
-      })
-    );
-  }, [brand, minPrice, maxPrice, minMileage, maxMileage, dispatch]);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-
-    switch (name) {
-      case "make":
-        setBrand(value);
-        break;
-      case "minPrice":
-        setMinPrice(value);
-        break;
-      case "maxPrice":
-        setMaxPrice(value);
-        break;
-      case "minMileage":
-        setMinMileage(value);
-        break;
-      case "maxMileage":
-        setMaxMileage(value);
-        break;
-      default:
-        break;
-    }
-  };
-
-  const handleSearch = () => {
-    // Logic for the search action can be added here
-  };
+    dispatch(setFilters({ make: brand, minPrice, maxPrice }));
+  }, [brand, minPrice, maxPrice, dispatch]);
 
   return (
-    <div className={s.filtersContainer}>
-      <div className={s.filter}>
-        <label htmlFor="make">Make:</label>
-        <div className={s.selectWrapper}>
-          <select
-            name="make"
-            value={brand}
-            onChange={handleChange}
-            className={s.select}
-          >
-            <option value="">All Makes</option>
-            {makes.map((make) => (
-              <option key={make} value={make}>
-                {make}
-              </option>
-            ))}
-          </select>
-          <div className={s.chevronDown}></div>
-        </div>
+    <div className={s.filter}>
+      <h3>Filters</h3>
+      <div className={s.filter__field}>
+        <label htmlFor="brand">Brand</label>
+        <select
+          id="brand"
+          value={brand}
+          onChange={(e) => setBrand(e.target.value)}
+        >
+          <option value="">All</option>
+          {makes.map((make, index) => (
+            <option key={index} value={make}>
+              {make}
+            </option>
+          ))}
+        </select>
       </div>
-      <div className={s.filter}>
-        <label htmlFor="minPrice">Min Price:</label>
+      <div className={s.filter__field}>
+        <label htmlFor="minPrice">Min Price</label>
         <input
+          id="minPrice"
           type="number"
-          name="minPrice"
-          placeholder="Min Price"
           value={minPrice}
-          onChange={handleChange}
-          className={s.inputFrom}
+          onChange={(e) => setMinPrice(e.target.value)}
         />
       </div>
-      <div className={s.filter}>
-        <label htmlFor="maxPrice">Max Price:</label>
+      <div className={s.filter__field}>
+        <label htmlFor="maxPrice">Max Price</label>
         <input
+          id="maxPrice"
           type="number"
-          name="maxPrice"
-          placeholder="Max Price"
           value={maxPrice}
-          onChange={handleChange}
-          className={s.inputTo}
+          onChange={(e) => setMaxPrice(e.target.value)}
         />
       </div>
-      <div className={s.filter}>
-        <label htmlFor="minMileage">Min Mileage:</label>
-        <input
-          type="number"
-          name="minMileage"
-          placeholder="Min Mileage"
-          value={minMileage}
-          onChange={handleChange}
-          className={s.inputFrom}
-        />
-      </div>
-      <div className={s.filter}>
-        <label htmlFor="maxMileage">Max Mileage:</label>
-        <input
-          type="number"
-          name="maxMileage"
-          placeholder="Max Mileage"
-          value={maxMileage}
-          onChange={handleChange}
-          className={s.inputTo}
-        />
-      </div>
-      <button className={s.searchButton} onClick={handleSearch}>
-        Search
-      </button>
     </div>
   );
 };

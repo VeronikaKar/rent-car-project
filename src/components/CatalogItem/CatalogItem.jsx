@@ -6,13 +6,8 @@ import s from "./CatalogItem.module.scss";
 const CatalogItem = ({ car, isFavorite, onToggleFavorite }) => {
   const [isOpen, setIsOpen] = React.useState(false);
 
-  const handleOpenModal = () => {
-    setIsOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsOpen(false);
-  };
+  const handleOpenModal = () => setIsOpen(true);
+  const handleCloseModal = () => setIsOpen(false);
 
   const isArray = (value) => Array.isArray(value);
 
