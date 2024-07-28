@@ -1,8 +1,11 @@
-# React + Vite
+A React.JS based web app that display available cars in you locality for renting.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Installation
+Pre-requisites
+Your machine should have NPM and Node installed.
+About the project
+A car rental website is an online platform that allows users to rent cars for personal or business use. The website provides an easy-to-use interface for searching, comparing, and reserving cars from a wide selection of vehicles that vary in make, model, size, and price.
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Build with:
+» Sass / Scss
+» React JS
