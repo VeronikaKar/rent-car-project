@@ -1,18 +1,22 @@
-import { Suspense } from "react";
-import Navigation from "../Navigation/Navigation";
 import { Outlet } from "react-router-dom";
+import { Navigation } from "../Navigation/Navigation";
+import s from "./Layout.module.scss";
 
 const Layout = () => {
   return (
-    <div className="w-full max-w-screen-lg mx-auto px-4">
-      <div className="mb-4">
-        <Navigation />
+    <div className={s.wrapper}>
+      <div className={s.header_wrap}>
+        <header className={s.header}>
+          <h2 className={s.title}>Car Rental</h2>
+          <Navigation />
+        </header>
       </div>
-      <Suspense fallback={null}>
-        <Outlet />
-      </Suspense>
+      <main className={s.main}>
+        <div>
+          <Outlet />
+        </div>
+      </main>
     </div>
   );
 };
-
 export default Layout;

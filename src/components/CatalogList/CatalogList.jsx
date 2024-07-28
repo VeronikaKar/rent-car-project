@@ -1,49 +1,57 @@
-import { useDispatch, useSelector } from "react-redux";
-import CatalogItem from "../../components/CatalogItem/CatalogItem";
-import { useModal } from "../../hooks/useModal";
-import { fetchCarById } from "../../redux/catalog/operations.js";
-import {
-  addToFavorites,
-  removeFromFavorites,
-} from "../../redux/catalog/slice.js";
-import css from "./CatalogList.module.scss";
-import { selectFavoriteCars } from "../../redux/catalog/selectors";
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { fetchCarsThunk } from "../../redux/catalog/operations";
+import { ModalWindow } from "../ModalWindow/ModalWindow";
+import s from "./CatalogList.module.scss";
+import { CatalogItem } from "../CatalogItem/CatalogItem";
 
-const CatalogList = ({ catalog, favorites }) => {
-  const savedFavorites = useSelector(selectFavoriteCars);
+export const CatalogList = ({ cars = [] }) => {
   const dispatch = useDispatch();
-  const { isModalOpen, openModal, closeModal } = useModal();
+  const [isOpenModal, setIsOpenModal] = useState(false);
+  const [selectedCar, setSelectedCar] = useState(null);
+  const [favoritedItems, setFavoritedItems] = useState([]);
 
-  const carList = catalog || favorites;
-
-  const handleLearnMoreClick = (id) => {
-    openModal();
-    dispatch(fetchCarById(id));
+  const handleOpenModal = (car) => {
+    setSelectedCar(car);
+    setIsOpenModal(true);
   };
 
-  const toggleAddToFavoritesClick = (id) => {
-    if (savedFavorites.some((car) => car.id === id)) {
-      dispatch(removeFromFavorites(id));
-      return;
-    }
-    dispatch(addToFavorites(id));
+  const handleCloseModal = () => {
+    setIsOpenModal(false);
+    setSelectedCar(null);
+  };
+
+  const handleLoadMore = () => {
+    dispatch(fetchCarsThunk());
+  };
+
+  const handleToggleFavorite = (id) => {
+    setFavoritedItems((prevFavoritedItems) =>
+      prevFavoritedItems.includes(id)
+        ? prevFavoritedItems.filter((itemId) => itemId !== id)
+        : [...prevFavoritedItems, id]
+    );
   };
 
   return (
-    <ul className={css.cardList}>
-      {carList.map((car) => (
-        <li className={css.cardListItem} key={car.id}>
+    <>
+      <ul className={s.list}>
+        {cars.map((item) => (
           <CatalogItem
-            car={car}
-            handleClick={{
-              handleLearnMoreClick,
-              toggleAddToFavoritesClick,
-            }}
+            onOpen={() => handleOpenModal(item)}
+            key={item.id}
+            {...item}
+            isFavorited={favoritedItems.includes(item.id)}
+            onToggleFavorite={handleToggleFavorite}
           />
-        </li>
-      ))}
-    </ul>
+        ))}
+      </ul>
+      {isOpenModal && (
+        <ModalWindow onClose={handleCloseModal} car={selectedCar} />
+      )}
+      <button className={s.btn_load_more} onClick={handleLoadMore}>
+        Load more
+      </button>
+    </>
   );
 };
-
-export default CatalogList;

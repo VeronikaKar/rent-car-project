@@ -1,47 +1,25 @@
-import { useEffect } from "react";
+import s from "./CatalogPage.module.scss";
+import { Filter } from "../../components/Filter/Filter";
 import { useDispatch, useSelector } from "react-redux";
-import CatalogList from "../../components/CatalogList/CatalogList";
-import Filter from "../../components/Filter/Filter";
-import Loader from "../../components/Loader/Loader";
-import LoadMore from "../../components/LoadMore/LoadMore";
+import { selectCars, selectIsLoading } from "../../redux/catalog/selectors.js";
+import { useEffect } from "react";
+import { fetchCarsThunk } from "../../redux/catalog/operations.js";
+import { Loader } from "../../components/Loader/Loader";
+import { CatalogList } from "../../components/CatalogList/CatalogList.jsx";
 
-import {
-  fetchInitialCatalog,
-  fetchMoreCars,
-} from "../../redux/catalog/operations";
-import {
-  selectCatalogItems,
-  selectLoadingState,
-  selectFilteredCatalogItems,
-} from "../../redux/catalog/selectors";
-
-import css from "./CatalogPage.module.scss";
-
-const CatalogPage = () => {
+ const CatalogPage = () => {
   const dispatch = useDispatch();
-  const cars = useSelector(selectCatalogItems);
-  const filteredCars = useSelector(selectFilteredCatalogItems);
-  const loading = useSelector(selectLoadingState);
+  const cars = useSelector(selectCars);
+  const isLoading = useSelector(selectIsLoading);
 
   useEffect(() => {
-    dispatch(fetchInitialCatalog());
+    dispatch(fetchCarsThunk());
   }, [dispatch]);
-
-  const handleLoadMoreClick = () => {
-    dispatch(fetchMoreCars());
-  };
-
   return (
-    <main className={css.mainContent}>
+    <div className={s.container}>
       <Filter />
-      {loading && <Loader />}
-      {!loading && cars.length === 0 && <p>No cars available</p>}
-      <CatalogList catalog={filteredCars.length ? filteredCars : cars} />
-      <div className={css.buttonContainer}>
-        <LoadMore onClick={handleLoadMoreClick} />
-      </div>
-    </main>
+      {isLoading ? <Loader /> : <CatalogList cars={cars} />}
+    </div>
   );
 };
-
-export default CatalogPage;
+export default CatalogPage

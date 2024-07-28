@@ -2,7 +2,7 @@ import { NavLink } from "react-router-dom";
 
 import s from "./Navigation.module.css";
 import clsx from "clsx";
-const Navigation = () => {
+export const Navigation = () => {
   const buildLinkClass = ({ isActive }) => {
     return clsx(s.link, isActive && s.active);
   };
@@ -23,4 +23,3 @@ const Navigation = () => {
     </nav>
   );
 };
-export default Navigation;

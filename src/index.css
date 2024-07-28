@@ -1,57 +1,112 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
 html,
 body,
+div,
+span,
 h1,
 h2,
 h3,
+h4,
+h5,
+h6,
 p,
-ul,
+
+a,
+
+address,
+cite,
+code,
+small,
+strike,
+strong,
+sub,
+sup,
+var,
+b,
+u,
+i,
 ol,
-li {
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+
+details,
+embed,
+figure,
+footer,
+header,
+menu,
+nav,
+output,
+section,
+time,
+mark {
   margin: 0;
   padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
 }
 
-body {
-  font-family: Arial, sans-serif;
-  line-height: 1.6;
-  background-color: #f0f0f0;
-  color: #333;
+button {
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+  border: none;
+  font-style: inherit;
 }
 
-.container {
-  width: 80%;
-  margin: 0 auto;
+img {
+  display: block;
+  object-fit: cover;
+  max-width: 100%;
+  height: auto;
 }
 
-h1 {
-  font-size: 2em;
-  margin-bottom: 0.5em;
-}
-
-h2 {
-  font-size: 1.5em;
-  margin-bottom: 0.5em;
-}
-
-p {
-  margin-bottom: 1em;
+a {
+  text-decoration: none;
 }
 
 ul,
 ol {
-  margin-bottom: 1em;
+  list-style-type: none;
+  margin: 0;
+  padding-left: 0;
+  display: flex;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
 }
 
-li {
-  margin-bottom: 0.5em;
+
+body {
+  box-sizing: border-box;
+  font-family: "Manrope", sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 150%;
+  color: #121417;
+  background-color: #fff;
 }
 
-@media (max-width: 768px) {
-  .container {
-    width: 90%;
-  }
+.container {
+  max-width: 1200px;
+  padding: 0 20px;
+  margin: 0 auto;
 }

@@ -1,84 +1,125 @@
-import clsx from "clsx";
-import { useSelector } from "react-redux";
-import { selectFavoriteCars } from "../../redux/catalog/selectors.js";
-import Icon from "../Icons/Icon";
-import css from "./CatalogItem.module.scss";
+import React, { useState } from "react";
+import PropTypes from "prop-types";
+import s from "./CatalogItem.module.scss";
+import EmptyHeart from "../images/Icon/EmptyHeart";
+import FilledHeart from "../images/Icon/FilledHeart";
 
-const extractCityFromAddress = (address) => {
-  const firstPoint = address.indexOf(",");
-  const cityAndCountry = address.slice(firstPoint + 2);
-  const secondPoint = cityAndCountry.indexOf(",");
-  const city = cityAndCountry.slice(0, secondPoint).trim();
-  return city;
+const Button = ({
+  text,
+  width,
+  handleClick,
+  type = "submit",
+  height = 44,
+  padding = 12,
+}) => (
+  <button
+    type={type}
+    className={s.btn}
+    style={{
+      maxWidth: `${width}px`,
+      height: `${height}px`,
+      padding: `${padding}px`,
+    }}
+    onClick={handleClick}
+  >
+    {text}
+  </button>
+);
+
+Button.propTypes = {
+  text: PropTypes.string.isRequired,
+  width: PropTypes.number.isRequired,
+  handleClick: PropTypes.func,
+  type: PropTypes.string,
+  height: PropTypes.number,
+  padding: PropTypes.number,
 };
 
-const extractCountryFromAddress = (address) => {
-  const firstPoint = address.indexOf(",");
-  const cityAndCountry = address.slice(firstPoint + 2);
-  const secondPoint = cityAndCountry.indexOf(",");
-  const country = cityAndCountry.slice(secondPoint + 2).trim();
-  return country;
+Button.defaultProps = {
+  handleClick: () => {},
+  type: "submit",
+  height: 44,
+  padding: 12,
 };
 
-const CatalogItem = ({ car, handleClick }) => {
-  const favorites = useSelector(selectFavoriteCars);
-  const { toggleAddToFavoritesClick, handleLearnMoreClick } = handleClick;
-  const {
-    img,
-    id,
-    make,
-    model,
-    year,
-    rentalPrice,
-    address,
-    rentalCompany,
-    type,
-    accessories,
-    photoLink,
-  } = car;
+const getCityAndCountry = (address) => {
+  if (!address) return { city: "Unknown City", country: "Unknown Country" };
+  const parts = address.split(", ");
+  const city = parts[parts.length - 2]?.trim() || "Unknown City";
+  const country = parts[parts.length - 1]?.trim() || "Unknown Country";
+  return { city, country };
+};
+
+export const CatalogItem = ({
+  onOpen,
+  img,
+  make,
+  model,
+  rentalPrice,
+  year,
+  address,
+  rentalCompany,
+  type,
+  id,
+  accessories,
+  isFavorited,
+  onToggleFavorite,
+}) => {
+  const { city, country } = getCityAndCountry(address);
 
   return (
-    <div className={css.card}>
-      <div className={css.thumbnail}>
-        <img
-          src={photoLink || img}
-          alt={`${make} ${model}`}
-          className={css.image}
-        />
-        <Icon
-          className={clsx(css.favoriteIcon, {
-            [css.active]: favorites.some((auto) => car.id === id),
-          })}
-          onClick={() => toggleAddToFavoritesClick(id)}
-          size={18}
-        />
-      </div>
-      <div className={css.cardContent}>
-        <div className={css.titleSection}>
-          <h3 className={css.cardTitle}>
-            {make} <span className={css.cardAccent}>{model}</span>, {year}
-          </h3>
-          <span className={css.cardPrice}>{rentalPrice}</span>
-        </div>
-        <ul className={css.infoList}>
-          <li className={css.infoItem}>{extractCityFromAddress(address)}</li>
-          <li className={css.infoItem}>{extractCountryFromAddress(address)}</li>
-          <li className={css.infoItem}>{rentalCompany}</li>
-          <li className={css.infoItem}>{type}</li>
-          <li className={css.infoItem}>{model}</li>
-          <li className={css.infoItem}>{id}</li>
-          <li className={css.infoItem}>{accessories[0]}</li>
-        </ul>
-        <button
-          className={css.actionButton}
-          onClick={() => handleLearnMoreClick(id)}
-          type="button"
-        >
-          Learn more
+    <li className={s.item}>
+      <div className={s.img_block}>
+        <img src={img} alt={`${make} ${model}`} />
+        <button className={s.heart} onClick={() => onToggleFavorite(id)}>
+          {isFavorited ? <FilledHeart size={18} /> : <EmptyHeart size={18} />}
         </button>
       </div>
-    </div>
+      <div className={s.titles_block}>
+        <h3>
+          {make}
+          <span className={s.model}> {model}</span>, {year}
+        </h3>
+        <p className={s.title_price}>{rentalPrice}</p>
+      </div>
+      <div className={s.tags_block}>
+        <ul className={s.tag_list}>
+          <li className={s.tag_item}>{city}</li>
+          <li className={s.tag_item}>{country}</li>
+          <li className={s.tag_item}>{rentalCompany}</li>
+        </ul>
+        <ul className={s.tag_list}>
+          <li className={s.tag_item}>{type}</li>
+          <li className={s.tag_item}>{model}</li>
+          <li className={s.tag_item}>{id}</li>
+          <li className={s.tag_item}>{accessories[0]?.slice(0, 15)}</li>
+        </ul>
+      </div>
+      <div className={s.btn_block}>
+        <Button width={274} text={"Learn more"} handleClick={onOpen} />
+      </div>
+    </li>
   );
 };
 
-export default CatalogItem;
+CatalogItem.propTypes = {
+  onOpen: PropTypes.func.isRequired,
+  img: PropTypes.string.isRequired,
+  make: PropTypes.string.isRequired,
+  model: PropTypes.string.isRequired,
+  rentalPrice: PropTypes.string.isRequired,
+  year: PropTypes.number.isRequired,
+  address: PropTypes.string,
+  rentalCompany: PropTypes.string.isRequired,
+  type: PropTypes.string.isRequired,
+  id: PropTypes.string.isRequired,
+  accessories: PropTypes.arrayOf(PropTypes.string),
+  isFavorited: PropTypes.bool,
+  onToggleFavorite: PropTypes.func.isRequired,
+};
+
+CatalogItem.defaultProps = {
+  address: "",
+  accessories: [],
+  isFavorited: false,
+};

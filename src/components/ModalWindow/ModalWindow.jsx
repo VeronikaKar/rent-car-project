@@ -1,146 +1,152 @@
-import Modal from "react-modal";
-import { X } from "lucide-react";
-import { useSelector } from "react-redux";
-import Loader from "../Loader/Loader";
-import { useModal } from "../../hooks/useModal";
+import { useEffect } from "react";
+import s from "./ModalWindow.module.scss";
+import { IoCloseOutline } from "react-icons/io5";
 
-import {
-  selectCarDetails,
-  selectLoadingState,
-} from "../../redux/catalog/selectors";
-import css from "./CardModal.module.css";
-
-Modal.setAppElement("#root");
-
-const customStylesWithBorder = {
-  overlay: {
-    backgroundColor: "rgba(18, 20, 23, 0.5)",
-    border: "2px solid rgba(255, 255, 255, 0.2)",
-    boxShadow: "0 0 10px rgba(0, 0, 0, 0.5)",
-  },
+const moveFirstCharToEnd = (str) => {
+  if (str.length > 1) {
+    return str.substring(1) + str.charAt(0);
+  }
+  return str;
 };
 
-const extractCityFromAddress = (address) => {
-  const firstComma = address.indexOf(",");
-  const cityAndCountry = address.slice(firstComma + 2);
-  const secondComma = cityAndCountry.indexOf(",");
-  return cityAndCountry.slice(0, secondComma).trim();
+const getCityAndCountry = (address) => {
+  if (!address) return { city: "Unknown City", country: "Unknown Country" };
+  const parts = address.split(", ");
+  const city = parts[parts.length - 2]?.trim() || "Unknown City";
+  const country = parts[parts.length - 1]?.trim() || "Unknown Country";
+  return { city, country };
 };
 
-const extractCountryFromAddress = (address) => {
-  const firstComma = address.indexOf(",");
-  const cityAndCountry = address.slice(firstComma + 2);
-  const secondComma = cityAndCountry.indexOf(",");
-  return cityAndCountry.slice(secondComma + 2).trim();
-};
-
-const getRentalConditions = (data) => {
-  const conditions = data.split("\n");
-  conditions[0] = conditions[0].slice(-2);
-  return conditions;
-};
-
-const ModalWindow = () => {
-  const auto = useSelector(selectCarDetails);
-  const isLoading = useSelector(selectLoadingState);
-  const { modalIsOpen, closeModal } = useModal();
-
-  if (isLoading) return <Loader />;
-
-  if (!auto) return null;
+export const ModalWindow = ({ onClose, car }) => {
+  if (!car) return null;
 
   const {
     img,
-    id,
     make,
     model,
     year,
+    description,
+    rentalConditions = "",
+    mileage,
     rentalPrice,
     address,
+    id,
     type,
-    accessories = [],
-    photoLink,
-    description,
-    functionalities = [],
-    mileage,
-    rentalConditions,
-    engineSize,
     fuelConsumption,
-  } = auto;
+    engineSize,
+    functionalities = [],
+    accessories = [],
+  } = car;
 
-  const city = extractCityFromAddress(address);
-  const country = extractCountryFromAddress(address);
-  const conditions = getRentalConditions(rentalConditions);
+  const { city, country } = getCityAndCountry(address);
+  const rentalConditionsArray = rentalConditions.split("\n");
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [onClose]);
+
+  const handleClickOutside = (e) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
+  const formatCondition = (condition) => {
+    const parts = condition.split(/(\d+)/);
+    return (
+      <>
+        {parts.map((part, index) =>
+          /\d+/.test(part) ? <span key={index}>{part}</span> : part
+        )}
+      </>
+    );
+  };
 
   return (
-    <Modal
-      className={css.modal}
-      isOpen={modalIsOpen}
-      onRequestClose={closeModal}
-      style={customStylesWithBorder}
-    >
-      <X className={css.icon} onClick={closeModal} size={24} />
-      <div className={css.thumb}>
-        <img src={photoLink || img} alt={`${make} ${model}`} />
-      </div>
-      <div className={css.content_wrapper}>
-        <div>
-          <div className={css.title_wrapper}>
-            <h3 className={css.title}>
-              {make} <span className={css.accent}>{model}</span>, {year}
-            </h3>
+    <div className={s.modal} onClick={handleClickOutside}>
+      <div className={s.modal_content}>
+        <button className={s.close} onClick={onClose}>
+          <IoCloseOutline size={24} />
+        </button>
+        <div className={s.img_block}>
+          <img src={img} alt={`${make} ${model}`} />
+        </div>
+        <div className={s.title_block}>
+          <h2 className={s.title}>
+            {make} <span className={s.model}>{model}</span>,{" "}
+            <span className={s.year}>{year}</span>
+          </h2>
+        </div>
+        <div className={s.tag_block}>
+          <ul className={s.list}>
+            <li className={s.item}>{city}</li>
+            <li className={s.item}>{country}</li>
+            <li className={s.item}>Id: {id}</li>
+            <li className={s.item}>Year: {year}</li>
+            <li className={s.item}>Type: {type}</li>
+          </ul>
+          <ul className={s.bottom_list}>
+            <li className={s.item}>Fuel Consumption: {fuelConsumption}</li>
+            <li className={s.item}>Engine Size: {engineSize}</li>
+          </ul>
+        </div>
+        <p className={s.description_text}>{description}</p>
+        <div className={s.functional_block}>
+          <h3 className={s.functional_title}>
+            Accessories and functionalities:
+          </h3>
+          <div className={s.functionality}>
+            <ul className={s.list}>
+              {accessories.map((item, index) => {
+                return (
+                  <li key={index} className={s.item}>
+                    {item}
+                  </li>
+                );
+              })}
+            </ul>
+            <ul className={s.bottom_list}>
+              {functionalities.map((item, index) => {
+                return (
+                  <li key={index} className={s.item}>
+                    {item}
+                  </li>
+                );
+              })}
+            </ul>
           </div>
-          <ul className={css.list}>
-            <li className={css.item}>{city}</li>
-            <li className={css.item}>{country}</li>
-            <li className={css.item}>Id: {id}</li>
-            <li className={css.item}>Year: {year}</li>
-            <li className={css.item}>Type: {type}</li>
-            <li className={css.item}>Fuel Consumption: {fuelConsumption}</li>
-            <li className={css.item}>Engine Size: {engineSize}</li>
-          </ul>
-          <p className={css.description}>{description}</p>
         </div>
-        <div>
-          <h4 className={css.sub_heading}>Accessories and functionalities:</h4>
-          <ul className={css.accessories_list}>
-            {[...accessories, ...functionalities].map((item, index) => (
-              <li key={index} className={css.item}>
-                {item}
+        <div className={s.rental_block}>
+          <h3 className={s.rental_title}>Rental Conditions: </h3>
+          <ul className={s.rental_list}>
+            {rentalConditionsArray.map((condition, index) => (
+              <li key={index} className={s.rental_item}>
+                {formatCondition(condition)}
               </li>
             ))}
-          </ul>
-        </div>
-        <div>
-          <h4 className={css.sub_heading}>Rental Conditions:</h4>
-          <ul className={css.conditions_list}>
-            <li className={css.conditions_item}>
-              Minimum age:{" "}
-              <span className={css.tag_accent}>{conditions[0]}</span>
+            <li className={s.rental_item}>
+              Mileage: <span>{mileage}</span>
             </li>
-            {conditions.slice(1).map((condition, index) => (
-              <li key={index} className={css.conditions_item}>
-                {condition}
-              </li>
-            ))}
-            <li className={css.conditions_item}>
-              Mileage:{" "}
-              <span className={css.tag_accent}>{mileage.toLocaleString()}</span>
-            </li>
-            <li className={css.conditions_item}>
-              Price:{" "}
-              <span className={css.tag_accent}>{`${rentalPrice.slice(
-                1
-              )}$`}</span>
+            <li className={s.rental_item}>
+              Price: <span>{moveFirstCharToEnd(rentalPrice)}</span>
             </li>
           </ul>
         </div>
-        <a className={css.button} href="tel:+380730000000">
-          Rental car
-        </a>
+        <div className={s.link_block}>
+          <a href="tel:+380730000000" className={s.link}>
+            Rental car
+          </a>
+        </div>
       </div>
-    </Modal>
+    </div>
   );
 };
-
-export default ModalWindow;

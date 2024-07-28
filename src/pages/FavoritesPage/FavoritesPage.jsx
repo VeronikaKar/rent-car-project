@@ -1,22 +1,64 @@
-import { useSelector } from "react-redux";
-import CatalogList from "../../components/CatalogList/CatalogList";
-import {
-  selectFavoriteCars,
-  selectLoadingState,
-} from "../../redux/catalog/selectors.js";
-
-import css from "./FavoritesPage.module.scss";
+import React, { useEffect, useState } from "react";
+import s from "./FavoritesPage.module.scss";
+import { CatalogItem } from "../../components/CatalogItem/CatalogItem";
 
 const FavoritesPage = () => {
-  const favorites = useSelector(selectFavoriteCars);
-  const loading = useSelector(selectLoadingState);
+  const [favorites, setFavorites] = useState([]);
+  const [cars, setCars] = useState([]); 
+
+  useEffect(() => {
+    
+    const savedFavorites = JSON.parse(localStorage.getItem("favorites")) || [];
+    setFavorites(savedFavorites);
+
+    
+    fetchCars();
+  }, []);
+
+  const fetchCars = async () => {
+    try {
+    
+      const response = await fetch(
+        "https://667d5847297972455f64b57d.mockapi.io/v1/adverts"
+      );
+      const data = await response.json();
+      setCars(data);
+    } catch (error) {
+      console.error("Failed to fetch cars", error);
+    }
+  };
+
+  const handleToggleFavorite = (id) => {
+    const updatedFavorites = favorites.includes(id)
+      ? favorites.filter((itemId) => itemId !== id)
+      : [...favorites, id];
+
+    setFavorites(updatedFavorites);
+
+    
+    localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
+  };
+
+ 
+  const favoriteCars = cars.filter((car) => favorites.includes(car.id));
 
   return (
-    <main className={css.mainContent}>
-      {loading && <p>Loading...</p>}
-      {!loading && favorites.length === 0 && <p>No favorite cars found</p>}
-      <CatalogList favorites={favorites} />
-    </main>
+    <div className={s.container}>
+      {favoriteCars.length === 0 ? (
+        <p>No favorite items found.</p>
+      ) : (
+        <ul className={s.list}>
+          {favoriteCars.map((car) => (
+            <CatalogItem
+              key={car.id}
+              {...car}
+              isFavorited={true}
+              onToggleFavorite={handleToggleFavorite}
+            />
+          ))}
+        </ul>
+      )}
+    </div>
   );
 };
 
