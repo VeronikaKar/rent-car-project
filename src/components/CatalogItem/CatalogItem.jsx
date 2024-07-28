@@ -6,9 +6,9 @@ import css from "./CatalogItem.module.scss";
 
 const extractCityFromAddress = (address) => {
   const firstPoint = address.indexOf(",");
-  const cityAndCountry = address.slice(firstComma + 2); // Remove "Street, "
+  const cityAndCountry = address.slice(firstPoint + 2);
   const secondPoint = cityAndCountry.indexOf(",");
-  const city = cityAndCountry.slice(0, secondComma).trim();
+  const city = cityAndCountry.slice(0, secondPoint).trim();
   return city;
 };
 
