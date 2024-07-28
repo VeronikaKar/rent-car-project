@@ -47,7 +47,7 @@ const ModalWindow = () => {
 
   if (isLoading) return <Loader />;
 
-  if (!auto) return null; // Handle case where auto is null or undefined
+  if (!auto) return null;
 
   const {
     img,

@@ -1,6 +1,6 @@
 import css from "./Icon.module.scss";
-import { EmptyHeart } from "../images/empty_heart.svg";
-import { FilledHeart } from "../images/heart_filled.svg";
+import EmptyHeart from "../images/Icon/EmptyHeart";
+import FilledHeart from "../images/Icon/FilledHeart";
 
 const Icon = ({ className, onClick, size = 18, filled }) => {
   const HeartIcon = filled ? FilledHeart : EmptyHeart;
@@ -8,8 +8,8 @@ const Icon = ({ className, onClick, size = 18, filled }) => {
     <HeartIcon
       className={`${css.icon} ${className}`}
       onClick={onClick}
-      width={18}
-      height={18}
+      width={size}
+      height={size}
     />
   );
 };

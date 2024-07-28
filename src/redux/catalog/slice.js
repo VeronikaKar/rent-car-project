@@ -1,6 +1,5 @@
+// carsSlice.js
 import { createSlice } from "@reduxjs/toolkit";
-import toast from "react-hot-toast";
-
 import {
   fetchCarById,
   fetchCarsByQuery,
@@ -75,22 +74,19 @@ const carsSlice = createSlice({
         state.isError = error.message;
       })
       .addCase(fetchCarById.fulfilled, (state, { payload }) => {
-        state.car = payload; // Update state.car instead of state.auto
+        state.car = payload;
         state.isError = null;
       })
       .addCase(fetchCarById.rejected, (state, { error }) => {
         state.isError = error.message;
       })
       .addCase(fetchCarsByQuery.fulfilled, (state, { payload }) => {
-        state.isLimit = payload.length < 12; // Simplify limit check
+        state.isLimit = payload.length < 12;
         state.catalog = payload;
         state.isError = null;
       })
       .addCase(fetchCarsByQuery.rejected, (state, { error }) => {
         state.isError = error.message;
-        toast("Sorry, no matches... Try again!", {
-          icon: "🤷‍♂️",
-        });
       });
   },
 });

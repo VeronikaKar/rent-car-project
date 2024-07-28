@@ -4,12 +4,15 @@ import { Outlet } from "react-router-dom";
 
 const Layout = () => {
   return (
-    <div className="max-w-screen-md mx-auto px-4">
-      <Navigation />
+    <div className="w-full max-w-screen-lg mx-auto px-4">
+      <div className="mb-4">
+        <Navigation />
+      </div>
       <Suspense fallback={null}>
         <Outlet />
       </Suspense>
     </div>
   );
 };
+
 export default Layout;

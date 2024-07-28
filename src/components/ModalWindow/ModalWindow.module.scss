@@ -1,6 +1,5 @@
-/* Modal styling */
 .modal {
-  position: absolute; 
+  position: absolute;
   top: 50%;
   left: 50%;
   margin-right: -50%;
@@ -15,7 +14,6 @@
   justify-content: center;
 }
 
-/* Desktop-only adjustments */
 @media only screen and (min-width: 768px) {
   .modal {
     width: 541px;
@@ -62,7 +60,6 @@
   stroke-opacity: 1;
 }
 
-/* Image thumbnail styling */
 .thumb {
   height: 225px;
   border-radius: 14px;
@@ -71,14 +68,12 @@
   margin-bottom: 14px;
 }
 
-/* Content wrapper styling */
 .content_wrapper {
   display: flex;
   flex-direction: column;
   gap: 24px;
 }
 
-/* Title styling */
 .title_wrapper {
   display: flex;
   justify-content: space-between;
@@ -101,7 +96,6 @@
   color: var(--accent);
 }
 
-/* Lists styling */
 .list {
   width: 277px;
   height: 40px;
@@ -137,14 +131,12 @@
   position: absolute;
 }
 
-/* Description styling */
 .description {
   color: var(--primary-color);
   font-size: 14px;
   line-height: 1.43;
 }
 
-/* Sub-heading styling */
 .sub_heading {
   color: var(--primary-color);
   font-weight: 500;
@@ -153,7 +145,6 @@
   margin-bottom: 8px;
 }
 
-/* Conditions list styling */
 .conditions_list {
   display: flex;
   flex-wrap: wrap;

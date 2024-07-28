@@ -2,14 +2,14 @@ import { useSelector } from "react-redux";
 import CatalogList from "../../components/CatalogList/CatalogList";
 import {
   selectFavoriteCars,
-  selectLoading,
+  selectLoadingState,
 } from "../../redux/catalog/selectors.js";
 
 import css from "./FavoritesPage.module.scss";
 
 const FavoritesPage = () => {
   const favorites = useSelector(selectFavoriteCars);
-  const loading = useSelector(selectLoading);
+  const loading = useSelector(selectLoadingState);
 
   return (
     <main className={css.mainContent}>

@@ -42,7 +42,6 @@ const CatalogList = ({ catalog, favorites }) => {
           />
         </li>
       ))}
-      {/* Optionally, include a Modal component here if you need to render it */}
     </ul>
   );
 };

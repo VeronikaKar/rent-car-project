@@ -1,15 +1,41 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import Select from "react-select";
-
-import { selectReferenceCatalog } from "../../redux/catalog/selectors.js";
-import { fetchCarsByQuery } from "../../redux/catalog/operations.js";
+import { useEffect, useState } from "react";
+import CustomSelect from "./CustomSelect";
+import { fetchCarsByQuery } from "../../redux/catalog/operations";
 import { saveValue } from "../../redux/catalog/slice.js";
-
 import css from "./Filter.module.scss";
 
-// Validation schema using Yup
+const createBrandOptions = (brands) => {
+  return brands
+    .filter((brand) => typeof brand === "string" && brand.trim() !== "")
+    .map((brand) => ({
+      value: brand.toLowerCase(),
+      label: brand,
+    }));
+};
+
+const createPriceOptions = (prices) => {
+  return prices
+    .filter((price) => typeof price === "string" && price.trim() !== "")
+    .sort((a, b) => a - b)
+    .map((option) => ({
+      value: option,
+      label: `$${option}`,
+    }));
+};
+
+const createMileageOptions = (mileages) => {
+  return mileages
+    .filter((mileage) => typeof mileage === "string" && mileage.trim() !== "")
+    .sort((a, b) => a - b)
+    .map((option) => ({
+      value: option,
+      label: `${option} miles`,
+    }));
+};
+
 const validationSchema = Yup.object({
   make: Yup.string().required("Car brand is required"),
   rentalPrice: Yup.number()
@@ -21,111 +47,37 @@ const validationSchema = Yup.object({
     "End mileage must be greater than start mileage"
   ),
 });
+
 const initialValues = {
   make: "",
   rentalPrice: "",
   from: "",
   to: "",
 };
-const selectStyles = {
-  control: (provided) => ({
-    ...provided,
-    width: 224,
-    height: 48,
-    borderRadius: 14,
-    border: "none",
-    padding: "14px 18px",
-    backgroundColor: "#f7f7fb",
-  }),
-  container: (provided) => ({
-    ...provided,
-    color: "#121417",
-    fontWeight: 500,
-    fontSize: 18,
-    lineHeight: 1.11,
-  }),
-  valueContainer: (provided) => ({
-    ...provided,
-    width: 186,
-    height: 18,
-    padding: 0,
-  }),
-  singleValue: (provided) => ({
-    ...provided,
-    color: "#121417",
-  }),
-  placeholder: (provided) => ({
-    ...provided,
-    color: "#121417",
-  }),
-  input: (provided) => ({
-    ...provided,
-    width: 186,
-    height: 18,
-    padding: 0,
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-  }),
-  indicatorSeparator: () => ({
-    display: "none",
-  }),
-  dropdownIndicator: (provided, state) => ({
-    ...provided,
-    height: 20,
-    width: 20,
-    position: "absolute",
-    cursor: "pointer",
-    top: 14,
-    right: 14,
-    transform: state.isFocused ? "rotate(180deg)" : "none",
-  }),
-  menu: (provided) => ({
-    ...provided,
-    border: "1px solid rgba(18, 20, 23, 0.05)",
-    borderRadius: 14,
-    padding: "14px 18px",
-    paddingRight: 8,
-    margin: 0,
-  }),
-  menuList: (provided) => ({
-    ...provided,
-    color: "rgba(18, 20, 23, 0.2)",
-    fontSize: 16,
-    lineHeight: 1.25,
-    display: "flex",
-    flexDirection: "column",
-    gap: 8,
-    maxHeight: 272,
-    overflowY: "auto",
-    "&::-webkit-scrollbar": {
-      width: 8,
-    },
-    "&::-webkit-scrollbar-thumb": {
-      borderRadius: 10,
-      backgroundColor: "rgba(18, 20, 23, 0.2)",
-    },
-  }),
-  option: (provided, state) => ({
-    ...provided,
-    cursor: "pointer",
-    color: state.isSelected ? "#F8466D" : "#121417",
-    backgroundColor: state.isFocused
-      ? "rgba(248, 70, 109, 0.1)"
-      : "transparent",
-    borderRadius: 8,
-    padding: "14px 18px",
-  }),
-};
 
 const Filter = () => {
   const dispatch = useDispatch();
-  const catalog = useSelector(selectReferenceCatalog);
+  const [brandOptions, setBrandOptions] = useState([]);
+  const [priceOptions, setPriceOptions] = useState([]);
+  const [mileageOptions, setMileageOptions] = useState([]);
+
+  useEffect(() => {
+    fetch("/makes.json") // Fetching from the public directory
+      .then((response) => response.json())
+      .then((data) => setBrandOptions(createBrandOptions(data)));
+
+    fetch("/prices.json") // Fetching from the public directory
+      .then((response) => response.json())
+      .then((data) => setPriceOptions(createPriceOptions(data)));
+
+    fetch("/mileages.json") // Fetching from the public directory
+      .then((response) => response.json())
+      .then((data) => setMileageOptions(createMileageOptions(data)));
+  }, []);
 
   const handleSubmit = (values) => {
-    dispatch(saveValue(values));
-    dispatch(fetchCarsByQuery(values));
+    dispatch(saveValue(values)); // Save form values to the Redux store
+    dispatch(fetchCarsByQuery(values)); // Fetch cars based on the form values
   };
 
   return (
@@ -134,27 +86,23 @@ const Filter = () => {
       validationSchema={validationSchema}
       onSubmit={handleSubmit}
     >
-      {({ errors, touched, handleChange, setFieldValue }) => (
+      {({ setFieldValue }) => (
         <Form className={css.form}>
-          <Select
-            options={catalog.map((car) => ({
-              value: car.make,
-              label: car.make,
-            }))}
-            placeholder="Car brand"
-            styles={selectStyles}
-            onChange={(option) => setFieldValue("make", option.value)}
-          />
-          <ErrorMessage name="make" component="div" className={css.error} />
-          <div className={css.priceWrapper}>
-            <label htmlFor="rentalPrice" className={css.label}>
-              Max rental price
-            </label>
+          <div className={css.field}>
             <Field
-              type="text"
+              name="make"
+              component={CustomSelect}
+              options={brandOptions}
+              placeholder="Car brand"
+            />
+            <ErrorMessage name="make" component="div" className={css.error} />
+          </div>
+          <div className={css.field}>
+            <Field
               name="rentalPrice"
-              placeholder="$"
-              className={css.input}
+              component={CustomSelect}
+              options={priceOptions}
+              placeholder="Max rental price"
             />
             <ErrorMessage
               name="rentalPrice"
@@ -162,29 +110,26 @@ const Filter = () => {
               className={css.error}
             />
           </div>
-          <div className={css.mileageWrapper}>
-            <label htmlFor="from" className={css.label}>
-              Mileage
-            </label>
+          <div className={css.field}>
             <div className={css.inputWrapper}>
               <Field
-                type="text"
                 name="from"
-                placeholder="from"
-                className={css.input}
+                component={CustomSelect}
+                options={mileageOptions}
+                placeholder=" Mileage from"
               />
               <Field
-                type="text"
                 name="to"
-                placeholder="to"
-                className={css.input}
+                component={CustomSelect}
+                options={mileageOptions}
+                placeholder=" Mileage to"
               />
             </div>
             <ErrorMessage name="from" component="div" className={css.error} />
             <ErrorMessage name="to" component="div" className={css.error} />
           </div>
-          <button type="submit" className={css.submitButton}>
-            Apply
+          <button type="submit" className={css.button}>
+            Search
           </button>
         </Form>
       )}

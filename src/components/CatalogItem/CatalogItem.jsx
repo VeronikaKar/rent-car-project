@@ -5,18 +5,18 @@ import Icon from "../Icons/Icon";
 import css from "./CatalogItem.module.scss";
 
 const extractCityFromAddress = (address) => {
-  const firstComma = address.indexOf(",");
+  const firstPoint = address.indexOf(",");
   const cityAndCountry = address.slice(firstComma + 2); // Remove "Street, "
-  const secondComma = cityAndCountry.indexOf(",");
-  const city = cityAndCountry.slice(0, secondComma).trim(); // Extract city
+  const secondPoint = cityAndCountry.indexOf(",");
+  const city = cityAndCountry.slice(0, secondComma).trim();
   return city;
 };
 
 const extractCountryFromAddress = (address) => {
-  const firstComma = address.indexOf(",");
-  const cityAndCountry = address.slice(firstComma + 2); // Remove "Street, "
-  const secondComma = cityAndCountry.indexOf(",");
-  const country = cityAndCountry.slice(secondComma + 2).trim(); // Extract country
+  const firstPoint = address.indexOf(",");
+  const cityAndCountry = address.slice(firstPoint + 2);
+  const secondPoint = cityAndCountry.indexOf(",");
+  const country = cityAndCountry.slice(secondPoint + 2).trim();
   return country;
 };
 

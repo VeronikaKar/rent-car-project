@@ -6,25 +6,25 @@ import Loader from "../../components/Loader/Loader";
 import LoadMore from "../../components/LoadMore/LoadMore";
 
 import {
-  fetchInitialCars,
+  fetchInitialCatalog,
   fetchMoreCars,
-} from "../../redux/catalog/operations.js";
+} from "../../redux/catalog/operations";
 import {
-  selectCars,
-  selectLoading,
-  selectFilteredCars,
-} from "../../redux/catalog/selectors.js";
+  selectCatalogItems,
+  selectLoadingState,
+  selectFilteredCatalogItems,
+} from "../../redux/catalog/selectors";
 
 import css from "./CatalogPage.module.scss";
 
 const CatalogPage = () => {
   const dispatch = useDispatch();
-  const cars = useSelector(selectCars);
-  const filteredCars = useSelector(selectFilteredCars);
-  const loading = useSelector(selectLoading);
+  const cars = useSelector(selectCatalogItems);
+  const filteredCars = useSelector(selectFilteredCatalogItems);
+  const loading = useSelector(selectLoadingState);
 
   useEffect(() => {
-    dispatch(fetchInitialCars());
+    dispatch(fetchInitialCatalog());
   }, [dispatch]);
 
   const handleLoadMoreClick = () => {
@@ -37,7 +37,9 @@ const CatalogPage = () => {
       {loading && <Loader />}
       {!loading && cars.length === 0 && <p>No cars available</p>}
       <CatalogList catalog={filteredCars.length ? filteredCars : cars} />
-      <LoadMore onClick={handleLoadMoreClick} />
+      <div className={css.buttonContainer}>
+        <LoadMore onClick={handleLoadMoreClick} />
+      </div>
     </main>
   );
 };
